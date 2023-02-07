@@ -1,0 +1,27 @@
+#!/bin/sh
+
+## This app will align a T1/T2w image to the ACPC plane (specifically, the MNI152_T1/2_1mm template from
+## FSL using a 6 DOF alignment via FSL commands. This protocol was adapted from the HCP Preprocessing
+## Pipeline (https://github.com/Washington-University/HCPpipelines.git). Requires a T1w image input
+## and outputs an acpc_aligned T1w image.
+
+imgtype=$1
+input=$2
+output=$3
+
+if [[ -z $output ]]; then
+	output=$input
+fi
+
+template=/Users/shalailahaas/Dropbox/Mac/Documents/GitHub/acpc-align/templates/MNI152_"$imgtype"_1mm.nii.gz
+flirtmap=$(mktemp)
+rigidmap=$(mktemp)
+
+echo 'Beggining alignment.'
+flirt -in $input -ref $template -omat $flirtmap
+aff2rigid $flirtmap $rigidmap
+applywarp -i $input -o $output -r $template --premat=$rigidmap
+echo 'Cleaning up...'
+rm $flirtmap
+rm $rigidmap
+echo 'All done!'

@@ -1,0 +1,5 @@
+cd /Users/shalailahaas/Dropbox/Mac/Documents/GitHub/acpc-align    
+
+./acpc-align T1 IR018.nii 
+
+ ./batch-run.sh 
